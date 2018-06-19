@@ -8,7 +8,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:IsNotNullConverter x:Key="isNotNullConverter" />
-            <converters:CollectionOfSampleToStringConverter x:Key="collectionOfSampleToStringConverter" />
+            <converters:CollectionOfSampleToStringConverter x:Key="collectionOfSampleToStringConverter"/>
             <converters:BoolToOpacityConverter x:Key="boolToOpacityConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>

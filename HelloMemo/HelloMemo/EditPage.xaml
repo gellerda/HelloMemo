@@ -10,8 +10,8 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:GetErrorByIndexConverter x:Key="getErrorByIndexConverter" />
-            <converters:IsNotNullConverter x:Key="isNotNullConverter" />
+            <converters:GetErrorByIndexConverter x:Key="getErrorByIndexConverter"/>
+            <converters:IsNotNullConverter x:Key="isNotNullConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
