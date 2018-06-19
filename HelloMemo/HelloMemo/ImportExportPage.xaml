@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HelloMemo.ImportExportPage"
+             Title="Imp/Exp">
+    <ContentPage.Content>
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Button Text="Save Vocab to Google Disk" Command="{Binding SaveVocab}"/>
+                <Button Text="Load Vocab from Google Disk" Command="{Binding LoadVocab}"/>
+            </StackLayout>
+
+            <StackLayout IsVisible="{Binding ImportExportPageIsBusy}" Padding="12" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1">
+                <ActivityIndicator IsRunning="{Binding ImportExportPageIsBusy}"/>
+                <Label Text="Loading" HorizontalOptions="Center"/>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

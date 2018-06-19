@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HelloMemo"
+             xmlns:converters="clr-namespace:HelloMemo.Converters"
+             xmlns:behaviors="clr-namespace:HelloMemo.Behaviors"
+             x:Class="HelloMemo.EditPage"
+             Title="Edit" 
+             x:Name="myEditPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:GetErrorByIndexConverter x:Key="getErrorByIndexConverter" />
+            <converters:IsNotNullConverter x:Key="isNotNullConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Button Text="Add New Word" Command="{Binding AddWord}"/>
+
+            <Frame Margin="3"  Padding="3" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Aqua" BackgroundColor="Aqua">
+                <Frame Margin="0" Padding="0" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="White" BackgroundColor="White">
+                    <StackLayout>
+                        <Editor Text="{Binding SelectedWordExpression}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}">
+                            <Editor.Behaviors>
+                                <behaviors:EditorValidationBehavior PropertyName="SelectedWordExpression"/>
+                            </Editor.Behaviors>
+                        </Editor>
+                        <Label Text="{Binding Errors[SelectedWordExpression], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedWordExpressionHasErrors}" TextColor="Red"/>
+                        <Editor Text="{Binding SelectedWordTrans}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}">
+                            <Editor.Behaviors>
+                                <behaviors:EditorValidationBehavior PropertyName="SelectedWordTrans"/>
+                            </Editor.Behaviors>
+                        </Editor>
+                        <Label Text="{Binding Errors[SelectedWordTrans], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedWordTransHasErrors}" TextColor="Red"/>
+                        <StackLayout Orientation="Horizontal">
+                            <Button Text="Save" Command="{Binding SaveWord}"/>
+                            <Button Text="Del" Command="{Binding DelWord}"/>
+                        </StackLayout>
+
+                        <Frame Margin="3"  Padding="1" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Blue" BackgroundColor="Blue">
+                            <Frame Margin="1" Padding="1" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="White" BackgroundColor="White">
+                                <StackLayout>
+                                    <ListView ItemsSource="{Binding SelectedWord.Samples}" SelectedItem="{Binding SelectedSample, Mode=TwoWay}" HasUnevenRows="True">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <ViewCell>
+                                                    <ViewCell.View>
+                                                        <StackLayout Orientation="Horizontal">
+                                                            <Button Text="Del" Command="{Binding Source={x:Reference Name=myEditPage}, Path=BindingContext.DelSample}" CommandParameter="{Binding Path=.}"/>
+                                                            <StackLayout>
+                                                                <Label Text="{Binding Phrase}"/>
+                                                                <Label Text="{Binding Trans, StringFormat='- {0}'}"/>
+                                                            </StackLayout>
+                                                        </StackLayout>
+                                                    </ViewCell.View>
+                                                </ViewCell>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+
+                                    <Editor Text="{Binding SelectedSamplePhrase}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
+                                        <Editor.Behaviors>
+                                            <behaviors:EditorValidationBehavior PropertyName="SelectedSamplePhrase"/>
+                                        </Editor.Behaviors>
+                                    </Editor>
+                                    <Label Text="{Binding Errors[SelectedSamplePhrase], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSamplePhraseHasErrors}" TextColor="Red"/>
+                                    <Editor Text="{Binding SelectedSampleTrans}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
+                                        <Editor.Behaviors>
+                                            <behaviors:EditorValidationBehavior PropertyName="SelectedSampleTrans"/>
+                                        </Editor.Behaviors>
+                                    </Editor>
+                                    <Label Text="{Binding Errors[SelectedSampleTrans], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSampleTransHasErrors}" TextColor="Red"/>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Button Text="Save Sample" Command="{Binding SaveSample}"/>
+                                        <Button Text="Add New Sample" Command="{Binding AddSample}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </Frame>
+
+                    </StackLayout>
+                </Frame>
+            </Frame>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

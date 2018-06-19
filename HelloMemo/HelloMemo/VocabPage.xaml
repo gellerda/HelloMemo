@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HelloMemo.VocabPage"
+             Title="Vocab" 
+             x:Name="myPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry Placeholder="Search..." Text="{Binding SearchString, }"/>
+            <ListView ItemsSource="{Binding Words}" SelectedItem="{Binding SelectedWord, Mode=TwoWay}" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal">
+                                    <Button Text="Del" Command="{Binding Source={x:Reference Name=myPage}, Path=BindingContext.DelWord}" CommandParameter="{Binding Path=.}"/>
+                                    <StackLayout>
+                                        <Label Text="{Binding Expression}"/>
+                                        <Label Text="{Binding Trans, StringFormat='- {0}'}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
