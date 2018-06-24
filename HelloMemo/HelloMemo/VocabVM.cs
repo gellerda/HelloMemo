@@ -285,6 +285,62 @@ namespace HelloMemo
             }
         }
         //--------------------------------------------------------------------------------------------------
+
+
+
+        private Command getRev;
+        public Command GetRev
+        {
+            get
+            {
+                return getRev ?? (getRev = new Command(
+                    execute: async objCommandParameter =>
+                    {
+
+
+                        ImportExportPageIsBusy = true;
+                        if (Clouds.GD.service == null) await AuthGoAsync();
+                        if (Clouds.GD.service != null)
+                        {
+
+
+                            DriveService service = Clouds.GD.service;
+                            string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+
+                            // папка root:
+                            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
+
+                            // Найдем папку helloMemoFolder, если она существует:
+                            IList<Google.Apis.Drive.v3.Data.File> helloMemoFolders = await Clouds.GD.SearchFolderInFolderAsync(service, "HelloMemo", rootFolder.Id);
+                            if (helloMemoFolders.Count < 1)
+                            {
+                                await App.Current.MainPage.DisplayAlert("Error:", "HelloMemo folder does not exist.", "OK");
+                                return;
+                            }
+
+                            // Найдем нужные нам Файлы, которые лежат в папке helloMemoFolder:
+                            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync(service, "hellonerd_copy.db", helloMemoFolders[0].Id);
+
+                            if (files.Count > 0)
+                            {
+                                var req=service.Revisions.List(files[0].Id);
+                                var rr=(await req.ExecuteAsync()).Revisions;
+                            }
+
+
+
+
+                        }
+                        ImportExportPageIsBusy = false;
+                    },
+                    canExecute: objCommandParameter =>
+                    {
+                        return true;
+                    }));
+            }
+        }
+        //--------------------------------------------------------------------------------------------------
         private Command loadVocab;
         public Command LoadVocab
         {
@@ -389,6 +445,7 @@ namespace HelloMemo
                         SelectedSample.Phrase = selectedSamplePhrase;
                         SelectedSample.Trans = selectedSampleTrans;
                         context.SaveChanges(); // SampleId автоматически обновляется при SaveChanges().
+                        SelectedSample = null;
                     },
                     canExecute: objCommandParameter =>
                     {

@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:HelloMemo"
              xmlns:converters="clr-namespace:HelloMemo.Converters"
              xmlns:behaviors="clr-namespace:HelloMemo.Behaviors"
+             xmlns:MyControls="clr-namespace:HelloMemo.MyControls"
              x:Class="HelloMemo.EditPage"
              Title="Edit" 
              x:Name="myEditPage">
@@ -16,73 +17,76 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <StackLayout>
-            <Button Text="Add New Word" Command="{Binding AddWord}"/>
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
 
-            <Frame Margin="3"  Padding="3" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Aqua" BackgroundColor="Aqua">
-                <Frame Margin="0" Padding="0" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="White" BackgroundColor="White">
-                    <StackLayout>
-                        <Editor Text="{Binding SelectedWordExpression}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}">
-                            <Editor.Behaviors>
-                                <behaviors:EditorValidationBehavior PropertyName="SelectedWordExpression"/>
-                            </Editor.Behaviors>
-                        </Editor>
-                        <Label Text="{Binding Errors[SelectedWordExpression], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedWordExpressionHasErrors}" TextColor="Red"/>
-                        <Editor Text="{Binding SelectedWordTrans}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}">
-                            <Editor.Behaviors>
-                                <behaviors:EditorValidationBehavior PropertyName="SelectedWordTrans"/>
-                            </Editor.Behaviors>
-                        </Editor>
-                        <Label Text="{Binding Errors[SelectedWordTrans], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedWordTransHasErrors}" TextColor="Red"/>
-                        <StackLayout Orientation="Horizontal">
-                            <Button Text="Save" Command="{Binding SaveWord}"/>
-                            <Button Text="Del" Command="{Binding DelWord}"/>
-                        </StackLayout>
+            <MyControls:EnhancedEditor HorizontalTextAlignment="Center" Placeholder="Input new word..."
+                Text="{Binding SelectedWordExpression}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}"
+                HorizontalOptions="Center" FontSize="Medium">
+                <MyControls:EnhancedEditor.Behaviors>
+                    <behaviors:EditorValidationBehavior PropertyName="SelectedWordExpression"/>
+                </MyControls:EnhancedEditor.Behaviors>
+            </MyControls:EnhancedEditor>
+            <Label Text="{Binding Errors[SelectedWordExpression], Converter={StaticResource getErrorByIndexConverter}}" 
+                   IsVisible="{Binding SelectedWordExpressionHasErrors}" TextColor="Red" HorizontalOptions="Center"/>
 
-                        <Frame Margin="3"  Padding="1" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="Blue" BackgroundColor="Blue">
-                            <Frame Margin="1" Padding="1" HasShadow="False" HorizontalOptions="FillAndExpand" CornerRadius="5" OutlineColor="White" BackgroundColor="White">
-                                <StackLayout>
-                                    <ListView ItemsSource="{Binding SelectedWord.Samples}" SelectedItem="{Binding SelectedSample, Mode=TwoWay}" HasUnevenRows="True">
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <ViewCell>
-                                                    <ViewCell.View>
-                                                        <StackLayout Orientation="Horizontal">
-                                                            <Button Text="Del" Command="{Binding Source={x:Reference Name=myEditPage}, Path=BindingContext.DelSample}" CommandParameter="{Binding Path=.}"/>
-                                                            <StackLayout>
-                                                                <Label Text="{Binding Phrase}"/>
-                                                                <Label Text="{Binding Trans, StringFormat='- {0}'}"/>
-                                                            </StackLayout>
-                                                        </StackLayout>
-                                                    </ViewCell.View>
-                                                </ViewCell>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
+            <MyControls:EnhancedEditor HorizontalTextAlignment="Center" Placeholder="and translation for new word..." 
+                Text="{Binding SelectedWordTrans}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}" 
+                HorizontalOptions="Center" FontSize="Medium" FontAttributes="Italic">
+                <MyControls:EnhancedEditor.Behaviors>
+                    <behaviors:EditorValidationBehavior PropertyName="SelectedWordTrans"/>
+                </MyControls:EnhancedEditor.Behaviors>
+            </MyControls:EnhancedEditor>
+            <Label Text="{Binding Errors[SelectedWordTrans], Converter={StaticResource getErrorByIndexConverter}}" 
+                   IsVisible="{Binding SelectedWordTransHasErrors}" TextColor="Red" HorizontalOptions="Center"/>
+            
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                <Button Text="Save" HorizontalOptions="Start" VerticalOptions="Fill" Command="{Binding SaveWord}"/>
+                <Button Text="Del" HorizontalOptions="Start" VerticalOptions="Fill" Command="{Binding DelWord}"/>
+                <Button Text="Add New Word" HorizontalOptions="EndAndExpand" VerticalOptions="Fill" Command="{Binding AddWord}"/>
+            </StackLayout>
 
-                                    <Editor Text="{Binding SelectedSamplePhrase}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
-                                        <Editor.Behaviors>
-                                            <behaviors:EditorValidationBehavior PropertyName="SelectedSamplePhrase"/>
-                                        </Editor.Behaviors>
-                                    </Editor>
-                                    <Label Text="{Binding Errors[SelectedSamplePhrase], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSamplePhraseHasErrors}" TextColor="Red"/>
-                                    <Editor Text="{Binding SelectedSampleTrans}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
-                                        <Editor.Behaviors>
-                                            <behaviors:EditorValidationBehavior PropertyName="SelectedSampleTrans"/>
-                                        </Editor.Behaviors>
-                                    </Editor>
-                                    <Label Text="{Binding Errors[SelectedSampleTrans], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSampleTransHasErrors}" TextColor="Red"/>
-                                    <StackLayout Orientation="Horizontal">
-                                        <Button Text="Save Sample" Command="{Binding SaveSample}"/>
-                                        <Button Text="Add New Sample" Command="{Binding AddSample}"/>
+            <Label Text="Примеры использования:" HorizontalOptions="Center" TextColor="Gray" FontAttributes="Italic" FontSize="Large" Margin="0,20,0,0"/>
+            <ListView VerticalOptions="Start" ItemsSource="{Binding SelectedWord.Samples}" SelectedItem="{Binding SelectedSample, Mode=TwoWay}" 
+                      IsVisible="{Binding SelectedWord.Samples, Converter={StaticResource isNotNullConverter}}" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal">
+                                    <Button Text="Del" Command="{Binding Source={x:Reference Name=myEditPage}, Path=BindingContext.DelSample}" CommandParameter="{Binding Path=.}"/>
+                                    <StackLayout>
+                                        <Label Text="{Binding Phrase}"/>
+                                        <Label Text="{Binding Trans, StringFormat='- {0}'}" FontAttributes="Italic"/>
                                     </StackLayout>
                                 </StackLayout>
-                            </Frame>
-                        </Frame>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-                    </StackLayout>
-                </Frame>
-            </Frame>
+            <StackLayout IsVisible="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}" HorizontalOptions="Fill">
+                <MyControls:EnhancedEditor HorizontalOptions="Center" HorizontalTextAlignment="Center" Placeholder="Input sample phrase..."
+                    Text="{Binding SelectedSamplePhrase}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
+                    <MyControls:EnhancedEditor.Behaviors>
+                        <behaviors:EditorValidationBehavior PropertyName="SelectedSamplePhrase"/>
+                    </MyControls:EnhancedEditor.Behaviors>
+                </MyControls:EnhancedEditor>
+                <Label Text="{Binding Errors[SelectedSamplePhrase], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSamplePhraseHasErrors}" TextColor="Red" HorizontalOptions="Center"/>
+
+                <MyControls:EnhancedEditor HorizontalOptions="Center" HorizontalTextAlignment="Center" Placeholder="and translation for this phrase..."
+                    FontAttributes="Italic" Text="{Binding SelectedSampleTrans}" IsEnabled="{Binding SelectedSample, Converter={StaticResource isNotNullConverter}}">
+                    <MyControls:EnhancedEditor.Behaviors>
+                        <behaviors:EditorValidationBehavior PropertyName="SelectedSampleTrans"/>
+                    </MyControls:EnhancedEditor.Behaviors>
+                </MyControls:EnhancedEditor>
+                <Label Text="{Binding Errors[SelectedSampleTrans], Converter={StaticResource getErrorByIndexConverter}}" IsVisible="{Binding SelectedSampleTransHasErrors}" TextColor="Red" HorizontalOptions="Center"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
+                <Button Text="Save Sample" Command="{Binding SaveSample}" HorizontalOptions="Start" VerticalOptions="Fill"/>
+                <Button Text="Add New Sample" Command="{Binding AddSample}" HorizontalOptions="EndAndExpand" VerticalOptions="Fill" />
+            </StackLayout>
 
         </StackLayout>
     </ContentPage.Content>

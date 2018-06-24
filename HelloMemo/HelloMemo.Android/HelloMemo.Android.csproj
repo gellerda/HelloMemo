@@ -78,6 +78,8 @@
     <Compile Include="FileAccessHelper.cs" />
     <Compile Include="GoogleAuthInterceptActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MyControlsRenderers\EnhancedEditorRenderer.cs" />
+    <Compile Include="MyControlsRenderers\ExpandableCenteredEditorRenderer.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
