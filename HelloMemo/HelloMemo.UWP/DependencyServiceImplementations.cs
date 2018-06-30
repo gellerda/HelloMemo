@@ -55,7 +55,6 @@ namespace HelloMemo.UWP
            // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
-
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile dbFile = await localFolder.TryGetItemAsync("hellonerd.db") as StorageFile;
 

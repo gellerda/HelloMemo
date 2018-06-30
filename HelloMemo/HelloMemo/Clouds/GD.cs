@@ -124,7 +124,7 @@ namespace HelloMemo.Clouds
         {
             Google.Apis.Drive.v3.Data.File body = new Google.Apis.Drive.v3.Data.File();
             FilesResource.UpdateMediaUpload req = service.Files.Update(body, fileId, stream, mimeType);
-            req.KeepRevisionForever = true;
+            //req.KeepRevisionForever = true; 
             await req.UploadAsync();
             return req.ResponseBody;
         }

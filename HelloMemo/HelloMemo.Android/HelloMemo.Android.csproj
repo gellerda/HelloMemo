@@ -81,7 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependencyServiceImplementations.cs" />
-    <Compile Include="FileAccessHelper.cs" />
+    <Compile Include="FileAccessHelperAndroid.cs" />
     <Compile Include="GoogleAuthInterceptActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyControlsRenderers\EnhancedEditorRenderer.cs" />

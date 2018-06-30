@@ -96,7 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DependencyServiceImplementations.cs" />
-    <Compile Include="FileAccessHelper.cs" />
+    <Compile Include="FileAccessHelperUWP.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

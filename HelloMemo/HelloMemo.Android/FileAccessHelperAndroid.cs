@@ -13,7 +13,7 @@ using System.IO;
 
 namespace HelloMemo.Droid
 {
-    public class FileAccessHelper
+    public class FileAccessHelperAndroid
     {
         public static void CopyDBFile()
         {

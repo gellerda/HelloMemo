@@ -32,7 +32,7 @@ namespace HelloMemo.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             MyConfig.PathApp = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            FileAccessHelper.CopyDBFile();
+            FileAccessHelperAndroid.CopyDBFile();
             LoadApplication(new App());
 
             Clouds.GD.InitAuth("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", "com.hellomemo:/oauth2redirect", "HelloMemo.Android");

@@ -7,7 +7,7 @@ using Windows.Storage;
 
 namespace HelloMemo.UWP
 {
-    public class FileAccessHelper
+    public class FileAccessHelperUWP
     {
         public async static void CopyDBFile()
         {

@@ -39,7 +39,7 @@ namespace HelloMemo.UWP
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            FileAccessHelper.CopyDBFile();
+            FileAccessHelperUWP.CopyDBFile();
             MyConfig.PathApp = ApplicationData.Current.LocalFolder.Path; // путь к бд должен быть таким: ApplicationData.Current.LocalFolder.Path + "\\" + "hellonerd.db";
 
 
