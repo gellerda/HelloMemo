@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using System.Threading;
 using Google.Apis.Drive.v3;
 
-
 namespace HelloMemo
 {
     public class VocabVM : INotifyPropertyChanged, INotifyDataErrorInfo
@@ -55,7 +54,6 @@ namespace HelloMemo
             SelectedSample = null;
         }
         //--------------------------------------------------------------------------------------------------
-        
         // Текущее слово для заучивания (его WordId равно значению первого элемента из списка WordsToLearn)
         DataModel.Word wordToLearn;
         public DataModel.Word WordToLearn
@@ -193,8 +191,6 @@ namespace HelloMemo
         async Task SaveVocabGDAsync() 
         {
             DriveService service = Clouds.GD.service;
-            //string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
             // папка root:
             Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
@@ -209,11 +205,8 @@ namespace HelloMemo
             {
                 if (await App.Current.MainPage.DisplayAlert("File " + files[0].Name + " is already exist:", "Overwrite?", "Yes", "No"))
                 {
-                    Debug.WriteLine("Let's update the file...");
-                    //using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
                     using (var stream = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                     {
-                        Debug.WriteLine("...updating...");
                         Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.UpdateFileAsync(service, files[0].Id, stream);
                         if (responceBody != null) DependencyService.Get<IToast>().LongToast("File Overwritten.");
                         else DependencyService.Get<IToast>().ShortToast("File NOT Overwritten!");
@@ -223,10 +216,9 @@ namespace HelloMemo
             }
             else
             {
-                //using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
-                using (var stream = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
+                using (var streamToRead = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                 {
-                    Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.CreateFileAsync(service, stream, "hellonerd_copy.db", helloMemoFolder.Id);
+                    Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.CreateFileAsync(service, streamToRead, "hellonerd_copy.db", helloMemoFolder.Id);
                     if (responceBody != null) DependencyService.Get<IToast>().LongToast("Saved.");
                     else DependencyService.Get<IToast>().ShortToast("NOT saved!");
                 }
@@ -255,9 +247,10 @@ namespace HelloMemo
 
             if (files.Count > 0)
             {
-                using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Create))
+                //using (var streamToWrite = new System.IO.FileStream(dbPath, System.IO.FileMode.Create))
+                using (var streamToWrite = await DependencyService.Get<ILocalFiles>().GetDBFileWritingStreamAsync())
                 {
-                    await Clouds.GD.DownloadFileAsync(service, files[0].Id, stream);
+                    await Clouds.GD.DownloadFileAsync(service, files[0].Id, streamToWrite);
                 }
                 ReInitVocab();
                 DependencyService.Get<IToast>().ShortToast("Vocab loaded.");
@@ -286,62 +279,6 @@ namespace HelloMemo
                     {
                         return importExportPageIsBusy ? false:true;
                     }  ));
-            }
-        }
-        //--------------------------------------------------------------------------------------------------
-
-
-
-        private Command getRev;
-        public Command GetRev
-        {
-            get
-            {
-                return getRev ?? (getRev = new Command(
-                    execute: async objCommandParameter =>
-                    {
-
-
-                        ImportExportPageIsBusy = true;
-                        if (Clouds.GD.service == null) await AuthGoAsync();
-                        if (Clouds.GD.service != null)
-                        {
-
-
-                            DriveService service = Clouds.GD.service;
-                            string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-                            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
-
-                            // папка root:
-                            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
-
-                            // Найдем папку helloMemoFolder, если она существует:
-                            IList<Google.Apis.Drive.v3.Data.File> helloMemoFolders = await Clouds.GD.SearchFolderInFolderAsync(service, "HelloMemo", rootFolder.Id);
-                            if (helloMemoFolders.Count < 1)
-                            {
-                                await App.Current.MainPage.DisplayAlert("Error:", "HelloMemo folder does not exist.", "OK");
-                                return;
-                            }
-
-                            // Найдем нужные нам Файлы, которые лежат в папке helloMemoFolder:
-                            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync(service, "hellonerd_copy.db", helloMemoFolders[0].Id);
-
-                            if (files.Count > 0)
-                            {
-                                var req=service.Revisions.List(files[0].Id);
-                                var rr=(await req.ExecuteAsync()).Revisions;
-                            }
-
-
-
-
-                        }
-                        ImportExportPageIsBusy = false;
-                    },
-                    canExecute: objCommandParameter =>
-                    {
-                        return true;
-                    }));
             }
         }
         //--------------------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ using Windows.UI.Notifications;
 
 //[assembly: Dependency(typeof(ILocalFiles)) ] -- Для регистрации в UWP ак делать не нужно. 
 // Регистрировать нужно вручную в проекте UWP в файле App.Xaml.cs вот так:
-// Xamarin.Forms.DependencyService.Register<LocalFiles>();
+// Xamarin.Forms.DependencyService.Register<LocalFilesUWP>();
 namespace HelloMemo.UWP
 {
     //******************************************************************************************************************************************
@@ -47,12 +47,12 @@ namespace HelloMemo.UWP
         //---------------------------------------------------------------------------------------
     }
     //******************************************************************************************************************************************
-    public class LocalFiles : ILocalFiles
+    public class LocalFilesUWP : ILocalFiles
     {
         //---------------------------------------------------------------------------------------
         public async Task<Stream> GetDBFileReadingStreamAsync()
         {
-           // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -62,6 +62,23 @@ namespace HelloMemo.UWP
             {
                 //return new System.IO.FileStream(dbPath, System.IO.FileMode.Open);
                 Stream stream = (await dbFile.OpenAsync(Windows.Storage.FileAccessMode.Read)).AsStream();
+                return stream;
+            }
+            return null;
+        }
+        //---------------------------------------------------------------------------------------
+        public async Task<Stream> GetDBFileWritingStreamAsync()
+        {
+            // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile dbFile = await localFolder.CreateFileAsync("hellonerd.db", CreationCollisionOption.ReplaceExisting); // Создадим файл. Если уже существует, то заменим.
+
+            if (dbFile != null)
+            {
+                //return new System.IO.FileStream(dbPath, System.IO.FileMode.Open);
+                Stream stream = (await dbFile.OpenAsync(Windows.Storage.FileAccessMode.ReadWrite)).AsStream();
                 return stream;
             }
             return null;

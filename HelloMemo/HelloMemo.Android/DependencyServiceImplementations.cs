@@ -13,7 +13,7 @@ using Android.Views;
 using Android.Widget;
 
 [assembly: Xamarin.Forms.Dependency(typeof(HelloMemo.Droid.ToastAndroid))]
-[assembly: Xamarin.Forms.Dependency(typeof(HelloMemo.Droid.LocalFiles))]
+[assembly: Xamarin.Forms.Dependency(typeof(HelloMemo.Droid.LocalFilesAndroid))]
 namespace HelloMemo.Droid
 {
     public class ToastAndroid : IToast
@@ -32,7 +32,7 @@ namespace HelloMemo.Droid
         //---------------------------------------------------------------------------------------
     }
     //******************************************************************************************************************************************
-    public class LocalFiles : ILocalFiles
+    public class LocalFilesAndroid : ILocalFiles
     {
         //---------------------------------------------------------------------------------------
         public async Task<Stream> GetDBFileReadingStreamAsync()
@@ -41,6 +41,14 @@ namespace HelloMemo.Droid
             string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
             return new System.IO.FileStream(dbPath, System.IO.FileMode.Open);
+        }
+        //---------------------------------------------------------------------------------------
+        public async Task<Stream> GetDBFileWritingStreamAsync()
+        {
+            string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+
+            return new System.IO.FileStream(dbPath, System.IO.FileMode.Create); // FileMode.Create - создать файл. Если уже существует, то переписать.
         }
         //---------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------

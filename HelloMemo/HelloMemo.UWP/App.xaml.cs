@@ -20,8 +20,6 @@ using System.Threading;
 using Xamarin.Auth;
 using System.Diagnostics; // Debug.WriteLine("Some text");
 
-
-
 namespace HelloMemo.UWP
 {
     /// <summary>
@@ -41,8 +39,6 @@ namespace HelloMemo.UWP
 
             FileAccessHelperUWP.CopyDBFile();
             MyConfig.PathApp = ApplicationData.Current.LocalFolder.Path; // путь к бд должен быть таким: ApplicationData.Current.LocalFolder.Path + "\\" + "hellonerd.db";
-
-
         }
         //----------------------------------------------------------------------------------------------------------------------------
         /// <summary>
@@ -66,7 +62,7 @@ namespace HelloMemo.UWP
                 Xamarin.Forms.Forms.Init(e);
 
                 // В проектах UWP регистрация классов DependencyService происходит вручную вот так:
-                Xamarin.Forms.DependencyService.Register<LocalFiles>();
+                Xamarin.Forms.DependencyService.Register<LocalFilesUWP>();
                 Xamarin.Forms.DependencyService.Register<ToastUWP>();
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

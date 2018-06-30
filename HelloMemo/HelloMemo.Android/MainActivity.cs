@@ -14,12 +14,6 @@ using System.Threading;
 
 namespace HelloMemo.Droid
 {
-    public interface ITokenIssuer<T>
-    {
-        T GetToken();
-    }
-
-
     [Activity(Label = "HelloMemo", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {

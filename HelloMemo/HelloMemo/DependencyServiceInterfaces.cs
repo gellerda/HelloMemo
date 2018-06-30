@@ -15,5 +15,6 @@ namespace HelloMemo
     public interface ILocalFiles
     {
         Task<Stream> GetDBFileReadingStreamAsync();
+        Task<Stream> GetDBFileWritingStreamAsync();
     }
 }
