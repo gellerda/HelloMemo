@@ -7,5 +7,6 @@ namespace HelloMemo
     public static class MyConfig
     {
         public static string PathApp { get; set; }
+        //public static object uwpRootFrame { get; set; }
     }
 }

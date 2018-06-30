@@ -21,7 +21,7 @@
 
             <MyControls:EnhancedEditor HorizontalTextAlignment="Center" Placeholder="Input new word..."
                 Text="{Binding SelectedWordExpression}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}"
-                HorizontalOptions="Center" FontSize="Medium">
+                HorizontalOptions="Fill" FontSize="Medium">
                 <MyControls:EnhancedEditor.Behaviors>
                     <behaviors:EditorValidationBehavior PropertyName="SelectedWordExpression"/>
                 </MyControls:EnhancedEditor.Behaviors>
@@ -31,7 +31,7 @@
 
             <MyControls:EnhancedEditor HorizontalTextAlignment="Center" Placeholder="and translation for new word..." 
                 Text="{Binding SelectedWordTrans}" IsEnabled="{Binding SelectedWord, Converter={StaticResource isNotNullConverter}}" 
-                HorizontalOptions="Center" FontSize="Medium" FontAttributes="Italic">
+                HorizontalOptions="Fill" FontSize="Medium" FontAttributes="Italic">
                 <MyControls:EnhancedEditor.Behaviors>
                     <behaviors:EditorValidationBehavior PropertyName="SelectedWordTrans"/>
                 </MyControls:EnhancedEditor.Behaviors>

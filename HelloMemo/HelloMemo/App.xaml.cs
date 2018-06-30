@@ -1,6 +1,8 @@
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Diagnostics; // Debug.WriteLine("Some text");
+
 
 [assembly: XamlCompilation (XamlCompilationOptions.Compile)]
 namespace HelloMemo
@@ -9,12 +11,26 @@ namespace HelloMemo
 	{
 		public App ()
 		{
-			InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("ERROR in LIB Initialize :" + e.Message);
+            }
 
-			MainPage = new MainPage();
-		}
+            try
+            {
+                MainPage = new MainPage();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("ERROR in LIB MainPage :" + e.Message);
+            }
+        }
 
-		protected override void OnStart ()
+        protected override void OnStart ()
 		{
 			// Handle when your app starts
 		}

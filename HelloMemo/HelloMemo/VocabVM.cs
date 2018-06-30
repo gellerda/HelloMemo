@@ -193,8 +193,8 @@ namespace HelloMemo
         async Task SaveVocabGDAsync() 
         {
             DriveService service = Clouds.GD.service;
-            string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+            //string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
             // папка root:
             Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
@@ -209,8 +209,11 @@ namespace HelloMemo
             {
                 if (await App.Current.MainPage.DisplayAlert("File " + files[0].Name + " is already exist:", "Overwrite?", "Yes", "No"))
                 {
-                    using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
+                    Debug.WriteLine("Let's update the file...");
+                    //using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
+                    using (var stream = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                     {
+                        Debug.WriteLine("...updating...");
                         Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.UpdateFileAsync(service, files[0].Id, stream);
                         if (responceBody != null) DependencyService.Get<IToast>().LongToast("File Overwritten.");
                         else DependencyService.Get<IToast>().ShortToast("File NOT Overwritten!");
@@ -220,7 +223,8 @@ namespace HelloMemo
             }
             else
             {
-                using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
+                //using (var stream = new System.IO.FileStream(dbPath, System.IO.FileMode.Open))
+                using (var stream = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                 {
                     Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.CreateFileAsync(service, stream, "hellonerd_copy.db", helloMemoFolder.Id);
                     if (responceBody != null) DependencyService.Get<IToast>().LongToast("Saved.");
@@ -274,7 +278,7 @@ namespace HelloMemo
                     execute: async objCommandParameter =>
                     {
                         ImportExportPageIsBusy = true;
-                        if (Clouds.GD.service==null) await AuthGoAsync();
+                        if (Clouds.GD.service == null) await AuthGoAsync();
                         if (Clouds.GD.service != null) await SaveVocabGDAsync();
                         ImportExportPageIsBusy = false;
                     },

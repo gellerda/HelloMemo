@@ -32,19 +32,20 @@ namespace HelloMemo.Clouds
 
         public static AutoResetEvent AuthCompletedHandle; // перед запуском аутентификации нужно = new AutoResetEvent(false);
 
-        public static void InitAuth(string clientId, Uri redirectUrl)
+        public static void InitAuth(string clientId, string redirectUrl, string appName)
         {
             Auth = new OAuth2Authenticator(
-                clientId,
-                string.Empty,
-                "https://www.googleapis.com/auth/drive",
-                new Uri("https://accounts.google.com/o/oauth2/auth"),
-                redirectUrl,
-                new Uri("https://accounts.google.com/o/oauth2/token"),
-                isUsingNativeUI: true);
+            clientId,
+            string.Empty,
+            "https://www.googleapis.com/auth/drive",
+            new Uri("https://accounts.google.com/o/oauth2/auth"),
+            new Uri(redirectUrl),
+            new Uri("https://accounts.google.com/o/oauth2/token"),
+            isUsingNativeUI: true);
 
             Auth.Completed += (sender, e) =>
             {
+                Debug.WriteLine("EVENT Auth.Completed()");
                 AuthenticatorCompletedEventArgs args = e as AuthenticatorCompletedEventArgs;
 
                 if (args.IsAuthenticated)
@@ -69,7 +70,7 @@ namespace HelloMemo.Clouds
                     service = new DriveService(new BaseClientService.Initializer()
                     {
                         HttpClientInitializer = credential,
-                        ApplicationName = "HelloMemo.Android",
+                        ApplicationName = appName,
                     });
                     AuthCompletedHandle.Set();
                 }
@@ -82,6 +83,7 @@ namespace HelloMemo.Clouds
 
             Auth.Error += (sender, e) =>
             {
+                Debug.WriteLine("EVENT Auth.Error ");
                 AuthenticatorErrorEventArgs err = e as AuthenticatorErrorEventArgs;
                 DependencyService.Get<IToast>().ShortToast(err.Message + ". " + err.Exception?.ToString());
                 AuthCompletedHandle.Set();

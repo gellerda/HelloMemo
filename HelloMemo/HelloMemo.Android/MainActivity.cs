@@ -35,7 +35,7 @@ namespace HelloMemo.Droid
             FileAccessHelper.CopyDBFile();
             LoadApplication(new App());
 
-            Clouds.GD.InitAuth("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", new Uri("com.hellomemo:/oauth2redirect"));
+            Clouds.GD.InitAuth("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", "com.hellomemo:/oauth2redirect", "HelloMemo.Android");
 
             VocabVM.AuthGoAsync = () =>
             {

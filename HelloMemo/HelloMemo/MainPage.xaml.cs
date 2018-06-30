@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Diagnostics; // Debug.WriteLine("Some text");
+
 
 namespace HelloMemo
 {
@@ -11,7 +13,7 @@ namespace HelloMemo
 	{
 		public MainPage()
 		{
-			InitializeComponent();
-		}
-	}
+            InitializeComponent();
+        }
+    }
 }
