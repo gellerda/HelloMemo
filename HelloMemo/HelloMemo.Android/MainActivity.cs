@@ -11,6 +11,8 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 using System.Threading;
+using Android.Widget;
+
 
 namespace HelloMemo.Droid
 {
@@ -27,9 +29,12 @@ namespace HelloMemo.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             MyConfig.PathApp = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             FileAccessHelperAndroid.CopyDBFile();
-            LoadApplication(new App());
 
-            Clouds.GD.InitAuth("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", "com.hellomemo:/oauth2redirect", "HelloMemo.Android");
+            // LoadApplication(new App()); - Невероятно, но так не работает (автоматически сгенерированный код).
+            HelloMemo.App myApp = new App(); 
+            LoadApplication(myApp); 
+
+            Clouds.GD.InitAuth ("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", "com.hellomemo:/oauth2redirect", "HelloMemo.Android");
 
             VocabVM.AuthGoAsync = () =>
             {

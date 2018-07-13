@@ -7,27 +7,12 @@ using System.Diagnostics; // Debug.WriteLine("Some text");
 [assembly: XamlCompilation (XamlCompilationOptions.Compile)]
 namespace HelloMemo
 {
-	public partial class App : Application
+	public partial class App : Xamarin.Forms.Application
 	{
 		public App ()
 		{
-            try
-            {
-                InitializeComponent();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("ERROR in LIB Initialize :" + e.Message);
-            }
-
-            try
-            {
-                MainPage = new MainPage();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("ERROR in LIB MainPage :" + e.Message);
-            }
+            InitializeComponent();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart ()

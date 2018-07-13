@@ -16,6 +16,12 @@ using Android.App;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 
+#if DEBUG
+    [assembly: Application(Icon = "@drawable/my_icon", Debuggable = true)]
+#else
+    [assembly: Application(Icon = "@drawable/my_icon", Debuggable=false)]
+#endif
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -32,3 +38,4 @@ using Android.App;
 // Add some common permissions, these can be removed if not needed
 [assembly: UsesPermission(Android.Manifest.Permission.Internet)]
 [assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
+
