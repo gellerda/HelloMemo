@@ -19,8 +19,8 @@ namespace HelloMemo
 {
     public class VocabVM : INotifyPropertyChanged, INotifyDataErrorInfo
     {
-        public delegate Task RunningTaskDelegate();
-        public static RunningTaskDelegate AuthGoAsync;
+        //public delegate Task RunningTaskDelegate();
+        //public static RunningTaskDelegate AuthGoAsync;
 
         DataModel.HelloMemoDBContext context;
         //--------------------------------------------------------------------------------------------------
@@ -38,6 +38,26 @@ namespace HelloMemo
         {
             ReInitVocab();
             RefreshWordsToLearn(10);
+        }
+        //--------------------------------------------------------------------------------------------------
+        // Информация о залогинившемся аккаунте GD (Google Drive). Если не залогинились, то null.
+        string userNameGD;
+        public string UserNameGD
+        {
+            get { return userNameGD; }
+            private set { userNameGD = value; OnPropertyChanged(); }
+        }
+
+        string userEmailGD;
+        public string UserEmailGD
+        {
+            get { return userEmailGD; }
+            private set
+            {
+                userEmailGD = value;
+                OnPropertyChanged();
+                logOutGD.ChangeCanExecute();
+            }
         }
         //--------------------------------------------------------------------------------------------------
         // Вызывается: 
@@ -170,8 +190,10 @@ namespace HelloMemo
             {
                 importExportPageIsBusy = value;
                 OnPropertyChanged();
+
                 SaveVocab.ChangeCanExecute();
                 LoadVocab.ChangeCanExecute();
+                logOutGD.ChangeCanExecute();
             }
         }
         //--------------------------------------------------------------------------------------------------
@@ -190,16 +212,14 @@ namespace HelloMemo
         //--------------------------------------------------------------------------------------------------
         async Task SaveVocabGDAsync() 
         {
-            DriveService service = Clouds.GD.service;
-
             // папка root:
-            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
+            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync();
 
             // Создадим папку helloMemoFolder, если она еще не существует:
-            Google.Apis.Drive.v3.Data.File helloMemoFolder = await Clouds.GD.CreateFolderIfNotExistAsync(service, "HelloMemo", rootFolder.Id, "#FFD700");
+            Google.Apis.Drive.v3.Data.File helloMemoFolder = await Clouds.GD.CreateFolderIfNotExistAsync("HelloMemo", rootFolder.Id, "#FFD700");
 
             // нужные нам Файлы, которые лежат в папке helloMemoFolder:
-            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync(service, "hellonerd_copy.db", helloMemoFolder.Id);
+            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync("hellonerd_copy.db", helloMemoFolder.Id);
 
             if (files.Count > 0)
             {
@@ -207,7 +227,7 @@ namespace HelloMemo
                 {
                     using (var stream = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                     {
-                        Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.UpdateFileAsync(service, files[0].Id, stream);
+                        Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.UpdateFileAsync(files[0].Id, stream);
                         if (responceBody != null) DependencyService.Get<IToast>().LongToast("File Overwritten.");
                         else DependencyService.Get<IToast>().ShortToast("File NOT Overwritten!");
                     }
@@ -218,7 +238,7 @@ namespace HelloMemo
             {
                 using (var streamToRead = await DependencyService.Get<ILocalFiles>().GetDBFileReadingStreamAsync())
                 {
-                    Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.CreateFileAsync(service, streamToRead, "hellonerd_copy.db", helloMemoFolder.Id);
+                    Google.Apis.Drive.v3.Data.File responceBody = await Clouds.GD.CreateFileAsync(streamToRead, "hellonerd_copy.db", helloMemoFolder.Id);
                     if (responceBody != null) DependencyService.Get<IToast>().LongToast("Saved.");
                     else DependencyService.Get<IToast>().ShortToast("NOT saved!");
                 }
@@ -227,15 +247,14 @@ namespace HelloMemo
         //--------------------------------------------------------------------------------------------------
         async Task LoadVocabGDAsync()
         {
-            DriveService service = Clouds.GD.service;
             string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
 
             // папка root:
-            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync(service);
+            Google.Apis.Drive.v3.Data.File rootFolder = await Clouds.GD.GetRootFolderAsync();
 
             // Найдем папку helloMemoFolder, если она существует:
-            IList<Google.Apis.Drive.v3.Data.File> helloMemoFolders = await Clouds.GD.SearchFolderInFolderAsync(service, "HelloMemo", rootFolder.Id);
+            IList<Google.Apis.Drive.v3.Data.File> helloMemoFolders = await Clouds.GD.SearchFolderInFolderAsync("HelloMemo", rootFolder.Id);
             if (helloMemoFolders.Count < 1)
             {
                 await App.Current.MainPage.DisplayAlert("Error:", "HelloMemo folder does not exist.", "OK");
@@ -243,14 +262,14 @@ namespace HelloMemo
             }
 
             // Найдем нужные нам Файлы, которые лежат в папке helloMemoFolder:
-            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync(service, "hellonerd_copy.db", helloMemoFolders[0].Id);
+            IList<Google.Apis.Drive.v3.Data.File> files = await Clouds.GD.SearchFileInFolderAsync("hellonerd_copy.db", helloMemoFolders[0].Id);
 
             if (files.Count > 0)
             {
                 //using (var streamToWrite = new System.IO.FileStream(dbPath, System.IO.FileMode.Create))
                 using (var streamToWrite = await DependencyService.Get<ILocalFiles>().GetDBFileWritingStreamAsync())
                 {
-                    await Clouds.GD.DownloadFileAsync(service, files[0].Id, streamToWrite);
+                    await Clouds.GD.DownloadFileAsync(files[0].Id, streamToWrite);
                 }
                 ReInitVocab();
                 DependencyService.Get<IToast>().ShortToast("Vocab loaded.");
@@ -271,8 +290,8 @@ namespace HelloMemo
                     execute: async objCommandParameter =>
                     {
                         ImportExportPageIsBusy = true;
-                        if (Clouds.GD.service == null) await AuthGoAsync();
-                        if (Clouds.GD.service != null) await SaveVocabGDAsync();
+                        if (Clouds.GD.Service==null && await Clouds.GD.LogInAsync()) { UserNameGD = Clouds.GD.UserName; UserEmailGD = Clouds.GD.UserEmail; }
+                        if (Clouds.GD.Service != null) await SaveVocabGDAsync();
                         ImportExportPageIsBusy = false;
                     },
                     canExecute: objCommandParameter => 
@@ -291,13 +310,32 @@ namespace HelloMemo
                     execute: async objCommandParameter =>
                     {
                         ImportExportPageIsBusy = true;
-                        if (Clouds.GD.service == null) await AuthGoAsync();
-                        if (Clouds.GD.service != null) await LoadVocabGDAsync();
+                        if (Clouds.GD.Service==null && await Clouds.GD.LogInAsync()) { UserNameGD = Clouds.GD.UserName; UserEmailGD = Clouds.GD.UserEmail; }
+                        if (Clouds.GD.Service != null) await LoadVocabGDAsync();
                         ImportExportPageIsBusy = false;
                     },
                     canExecute: objCommandParameter =>
                     {
                         return importExportPageIsBusy ? false : true;
+                    }));
+            }
+        }
+        //--------------------------------------------------------------------------------------------------
+        private Command logOutGD;
+        public Command LogOutGD
+        {
+            get
+            {
+                return logOutGD ?? (logOutGD = new Command(
+                    execute: async objCommandParameter =>
+                    {
+                        Clouds.GD.LogOut();
+                        UserEmailGD = null;
+                        UserNameGD = null;
+                    },
+                    canExecute: objCommandParameter =>
+                    {
+                        return (importExportPageIsBusy || userEmailGD == null) ? false : true;
                     }));
             }
         }

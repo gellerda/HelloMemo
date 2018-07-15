@@ -32,25 +32,17 @@ namespace HelloMemo.Droid
 
             // LoadApplication(new App()); - Невероятно, но так не работает (автоматически сгенерированный код).
             HelloMemo.App myApp = new App(); 
-            LoadApplication(myApp); 
+            LoadApplication(myApp);
 
-            Clouds.GD.InitAuth ("530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", "com.hellomemo:/oauth2redirect", "HelloMemo.Android");
-
-            VocabVM.AuthGoAsync = () =>
-            {
-                return Task.Run( () =>
-                    {
-                        Clouds.GD.AuthCompletedHandle = new AutoResetEvent(false);
-
-                        // Display the activity handling the authentication
-                        var intent = Clouds.GD.Auth.GetUI(this);
-                        Xamarin.Auth.CustomTabsConfiguration.CustomTabsClosingMessage = null;
-                        StartActivity(intent);
-
-                        Clouds.GD.AuthCompletedHandle.WaitOne();
-                    });
-            };
-
+            // Параметры аутентификации платформ-специфичны:
+            Clouds.GD.InitAuthParameters( "530287818664-s3j72akh3flg65r2sqghobqjka9d9aqi.apps.googleusercontent.com", 
+                                          "com.hellomemo:/oauth2redirect", "HelloMemo.Android",
+                                          () => {
+                                                    var intent = Clouds.GD.Auth.GetUI(this);
+                                                    Xamarin.Auth.CustomTabsConfiguration.CustomTabsClosingMessage = null;
+                                                    StartActivity(intent);
+                                                }   
+                                        );
         }
     }
 }

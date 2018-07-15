@@ -83,27 +83,22 @@ namespace HelloMemo.UWP
                     // параметр
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
 
-                    Clouds.GD.InitAuth("578093782315-tr81qor051gru9mqcn27aifthvk17vos.apps.googleusercontent.com", "com.hellomemo.uwporios:/oauth2redirect", "com.hellomemo.uwporios");
-                    VocabVM.AuthGoAsync = () =>
-                    {
-                        //Frame rootFrame = Window.Current.Content as Frame;
-                        return Task.Run(async () =>
-                        {
-                            Clouds.GD.AuthCompletedHandle = new AutoResetEvent(false);
+                    // Параметры аутентификации платформ-специфичны:
+                    Clouds.GD.InitAuthParameters( "578093782315-tr81qor051gru9mqcn27aifthvk17vos.apps.googleusercontent.com", 
+                                                  "com.hellomemo.uwporios:/oauth2redirect", "com.hellomemo.uwporios",
+                                                  async () =>
+                                                  {
+                                                        //If you are on a worker thread and want to schedule work on the UI thread, use CoreDispatcher::RunAsyn :
+                                                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync( Windows.UI.Core.CoreDispatcherPriority.Normal, 
+                                                            () =>
+                                                            {
+                                                                var intentUWP = Clouds.GD.Auth.GetUI();
+                                                                Frame f = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
+                                                                f.Navigate(intentUWP, Clouds.GD.Auth);
+                                                            }  );
 
-                            //If you are on a worker thread and want to schedule work on the UI thread, use CoreDispatcher::RunAsyn :
-                            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync( Windows.UI.Core.CoreDispatcherPriority.Normal, 
-                                () =>
-                                {
-                                    var intentUWP = Clouds.GD.Auth.GetUI();
-                                    Frame f = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
-                                    f.Navigate(intentUWP, Clouds.GD.Auth);
-                                }  );
-
-                            Clouds.GD.AuthCompletedHandle.WaitOne();
-                        });
-                    };
-
+                                                  }
+                                                );
                 }
                 // Обеспечение активности текущего окна
                 Window.Current.Activate();
