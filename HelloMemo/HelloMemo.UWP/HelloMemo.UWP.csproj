@@ -108,6 +108,7 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Assets\hellonerd.db" />
+    <Content Include="Assets\my.config" />
     <None Include="HelloMemo.UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

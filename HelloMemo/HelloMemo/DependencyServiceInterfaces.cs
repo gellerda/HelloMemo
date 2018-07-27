@@ -14,7 +14,8 @@ namespace HelloMemo
 
     public interface ILocalFiles
     {
-        Task<Stream> GetDBFileReadingStreamAsync();
-        Task<Stream> GetDBFileWritingStreamAsync();
+        // fileName - имя файла без пути. Путь к файлу - текущая папка приложения.
+        Task<Stream> GetLocalFileReadingStreamAsync(string fileName);
+        Task<Stream> GetLocalFileWritingStreamAsync(string fileName);
     }
 }

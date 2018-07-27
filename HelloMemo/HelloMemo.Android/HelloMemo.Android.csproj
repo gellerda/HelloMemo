@@ -117,7 +117,7 @@
   <ItemGroup>
     <Compile Include="DependencyServiceImplementations.cs" />
     <Compile Include="FileAccessHelperAndroid.cs" />
-    <Compile Include="GoogleAuthInterceptActivity.cs" />
+    <Compile Include="AuthInterceptActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyControlsRenderers\EnhancedEditorRenderer.cs" />
     <Compile Include="MyControlsRenderers\ExpandableCenteredEditorRenderer.cs" />
@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\hellonerd.db" />
+    <AndroidAsset Include="Assets\my.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
     <None Include="Properties\AndroidManifest.xml">
@@ -150,7 +151,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-xhdpi\yandex_disk_icon.png" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HelloMemo\HelloMemo.csproj">
       <Project>{8FEC4AE1-ADB9-4A51-9F1A-1E72EC3E576B}</Project>

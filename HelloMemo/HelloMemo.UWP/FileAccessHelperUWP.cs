@@ -9,22 +9,22 @@ namespace HelloMemo.UWP
 {
     public class FileAccessHelperUWP
     {
-        public async static void CopyDBFile()
+        public async static void CopyFileFromAssets(string fileName, bool needToOverwrite)
         {
             // Смотрим, нет ли уже в LocalFolder файла с нашей базой данных...
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile dbFile = await localFolder.TryGetItemAsync("hellonerd.db") as StorageFile;
+            StorageFile dbFile = await localFolder.TryGetItemAsync(fileName) as StorageFile;
 
             // ... Если еще нет, то нужно ее туда скопировать из папки Assets:
-            if (dbFile==null)
+            if (needToOverwrite || dbFile== null)
             {
                 // first time ... copy the .db file from assets to local  folder
-                var originalDbFileUri = new Uri("ms-appx:///Assets/hellonerd.db");
+                var originalDbFileUri = new Uri("ms-appx:///Assets/"+ fileName);
                 var originalDbFile = await StorageFile.GetFileFromApplicationUriAsync(originalDbFileUri);
 
                 if (originalDbFile != null)
                 {
-                    dbFile = await originalDbFile.CopyAsync(localFolder, "hellonerd.db", NameCollisionOption.ReplaceExisting);
+                    dbFile = await originalDbFile.CopyAsync(localFolder, fileName, NameCollisionOption.ReplaceExisting);
                 }
             }
         }

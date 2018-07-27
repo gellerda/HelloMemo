@@ -68,14 +68,14 @@ namespace HelloMemo.Clouds
                             ClientSecret = string.Empty,
                         },
                         Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
-                });
+                    });
 
                     var token = new TokenResponse { AccessToken = args.Account.Properties["access_token"], RefreshToken = args.Account.Properties["refresh_token"] };
                     var credential = new UserCredential(googleFlow, "user", token);
                     Service = new DriveService(new BaseClientService.Initializer()
                     {
                         HttpClientInitializer = credential,
-                        ApplicationName = appName,
+                        ApplicationName = authAppName,
                     });
 
                     //Получим справочную информацию об аккаунте:
@@ -85,21 +85,17 @@ namespace HelloMemo.Clouds
                     User user = about.User;
                     UserName = user.DisplayName;
                     UserEmail = user.EmailAddress;
+                }
+                else DependencyService.Get<IToast>().ShortToast("Google Drive authentication canceled.");
 
-                    AuthCompletedHandle.Set();
-                }
-                else
-                {
-                    DependencyService.Get<IToast>().ShortToast("Authentication canceled.");
-                    AuthCompletedHandle.Set();
-                }
+                AuthCompletedHandle.Set();
             };
 
             Auth.Error += (sender, e) =>
             {
                 //Debug.WriteLine("EVENT Auth.Error ");
                 AuthenticatorErrorEventArgs err = e as AuthenticatorErrorEventArgs;
-                DependencyService.Get<IToast>().ShortToast(err.Message + ". " + err.Exception?.ToString());
+                DependencyService.Get<IToast>().ShortToast("GD Auth: " + err.Message + ". " + err.Exception?.ToString());
                 AuthCompletedHandle.Set();
             };
 
@@ -214,7 +210,7 @@ namespace HelloMemo.Clouds
                 return await CreateFileAsync(stream, fileName, parentFolderId, mimeType);
         }
         //--------------------------------------------------------------------------------------------------
-        public static async Task DownloadFileAsync(string fileId, Stream stream)
+        public static async Task DownloadFileAsync(string fileId, Stream fileContentStream)
         {
             var request = Service.Files.Get(fileId);
             System.IO.MemoryStream memStream = new System.IO.MemoryStream();
@@ -248,15 +244,13 @@ namespace HelloMemo.Clouds
             memStream.Seek(0, SeekOrigin.Begin);
 
             using (var br = new BinaryReader(memStream))
+            using (var bw = new BinaryWriter(fileContentStream))
             {
-                using (var bw = new BinaryWriter(stream))
+                byte[] buffer = new byte[2048];
+                int length = 0;
+                while ((length = br.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    byte[] buffer = new byte[2048];
-                    int length = 0;
-                    while ((length = br.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        bw.Write(buffer, 0, length);
-                    }
+                    bw.Write(buffer, 0, length);
                 }
             }
         }

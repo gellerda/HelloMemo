@@ -15,14 +15,14 @@ namespace HelloMemo.Droid
 {
     public class FileAccessHelperAndroid
     {
-        public static void CopyDBFile()
+        public static void CopyFileFromAssets(string fileName, bool needToOverwrite)
         {
             string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            string dbPath = Path.Combine(appPath, "hellonerd.db");
-            if (!File.Exists(dbPath))
+            string dbPath = Path.Combine(appPath, fileName);
+            if (needToOverwrite || !File.Exists(dbPath))
             {
                 //string[] x = Directory.GetFiles(appPath);
-                using (var br = new BinaryReader(Application.Context.Assets.Open("hellonerd.db")))
+                using (var br = new BinaryReader(Application.Context.Assets.Open(fileName)))
                 {
                     using (var bw = new BinaryWriter(new FileStream(dbPath, FileMode.Create)))
                     {

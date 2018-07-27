@@ -35,20 +35,23 @@ namespace HelloMemo.Droid
     public class LocalFilesAndroid : ILocalFiles
     {
         //---------------------------------------------------------------------------------------
-        public async Task<Stream> GetDBFileReadingStreamAsync()
+        // fileName - имя файла без пути. Путь к файлу - текущая папка приложения.
+        public async Task<Stream> GetLocalFileReadingStreamAsync(string fileName)
         {
             string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+            string dbPath = System.IO.Path.Combine(appPath, fileName);
 
             return new System.IO.FileStream(dbPath, System.IO.FileMode.Open);
         }
         //---------------------------------------------------------------------------------------
-        public async Task<Stream> GetDBFileWritingStreamAsync()
+        // fileName - имя файла без пути. Путь к файлу - текущая папка приложения.
+        public async Task<Stream> GetLocalFileWritingStreamAsync(string fileName)
         {
             string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
+            string dbPath = System.IO.Path.Combine(appPath, fileName);
 
-            return new System.IO.FileStream(dbPath, System.IO.FileMode.Create); // FileMode.Create - создать файл. Если уже существует, то переписать.
+            // Важно не создавать файл заново, если данный файл уже существует т.к. при перезаписи может случиться ошибка, а старый файл уже затерт.
+            return new System.IO.FileStream(dbPath, System.IO.FileMode.OpenOrCreate); 
         }
         //---------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------

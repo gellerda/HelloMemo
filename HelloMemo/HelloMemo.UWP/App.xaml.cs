@@ -37,8 +37,10 @@ namespace HelloMemo.UWP
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            FileAccessHelperUWP.CopyDBFile();
-            MyConfig.PathApp = ApplicationData.Current.LocalFolder.Path; // путь к бд должен быть таким: ApplicationData.Current.LocalFolder.Path + "\\" + "hellonerd.db";
+            GlobalVars.PathApp = ApplicationData.Current.LocalFolder.Path; 
+            //Скопируем след. файлы из Assets в локальную папку приложения (PathApp), если их там еще нет:
+            FileAccessHelperUWP.CopyFileFromAssets(GlobalVars.LocalDbFileName, false);
+            FileAccessHelperUWP.CopyFileFromAssets(GlobalVars.MyConfigFileName, false);
         }
         //----------------------------------------------------------------------------------------------------------------------------
         /// <summary>
@@ -99,6 +101,23 @@ namespace HelloMemo.UWP
 
                                                   }
                                                 );
+
+                    Clouds.YD.InitAuthParameters("2401f70fad1a4849bb131cf05a559fff",
+                                                  "com.hellomemo.uwporios:/oauth.yandex.ru/verification_code", "HelloMemo.UWP",
+                                                  "2571319c26c344a9bf058406c698f46b",
+                                                    async () =>
+                                                    {
+                                                        //If you are on a worker thread and want to schedule work on the UI thread, use CoreDispatcher::RunAsyn :
+                                                        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                                                                () =>
+                                                                {
+                                                                    var intentUWP = Clouds.YD.Auth.GetUI();
+                                                                    Frame f = Window.Current.Content as Windows.UI.Xaml.Controls.Frame;
+                                                                    f.Navigate(intentUWP, Clouds.YD.Auth);
+                                                                }  );
+                                                    }
+                                                );
+
                 }
                 // Обеспечение активности текущего окна
                 Window.Current.Activate();
@@ -136,7 +155,11 @@ namespace HelloMemo.UWP
             {
                 ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
                 Uri absUri = new Uri(eventArgs.Uri.AbsoluteUri);
-                Clouds.GD.Auth.OnPageLoading(absUri);
+
+                if (absUri.AbsolutePath == @"/oauth.yandex.ru/verification_code")
+                    Clouds.YD.Auth.OnPageLoading(absUri);
+                else
+                    Clouds.GD.Auth.OnPageLoading(absUri);
             }
             else
             {

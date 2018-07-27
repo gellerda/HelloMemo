@@ -27,8 +27,11 @@ namespace HelloMemo.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            MyConfig.PathApp = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            FileAccessHelperAndroid.CopyDBFile();
+
+            GlobalVars.PathApp = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            //Скопируем след. файлы из Assets в локальную папку приложения (PathApp), если их там еще нет:
+            FileAccessHelperAndroid.CopyFileFromAssets(GlobalVars.LocalDbFileName, false);
+            FileAccessHelperAndroid.CopyFileFromAssets(GlobalVars.MyConfigFileName, false);
 
             // LoadApplication(new App()); - Невероятно, но так не работает (автоматически сгенерированный код).
             HelloMemo.App myApp = new App(); 
@@ -43,6 +46,17 @@ namespace HelloMemo.Droid
                                                     StartActivity(intent);
                                                 }   
                                         );
+
+            Clouds.YD.InitAuthParameters( "dae6e4457a6a45dcb6a2fce138fb5dad",
+                                          "com.hellomemo://oauth.yandex.ru/verification_code", "com.hellomemo", 
+                                          "659199eafc2f4d618f5d5888e04eb265",
+                                          () => {
+                                              var intent = Clouds.YD.Auth.GetUI(this);
+                                              Xamarin.Auth.CustomTabsConfiguration.CustomTabsClosingMessage = null;
+                                              StartActivity(intent);
+                                          }
+                                        );
+
         }
     }
 }

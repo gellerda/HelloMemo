@@ -12,7 +12,7 @@ namespace HelloMemo.DataModel
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string fName = Path.Combine(MyConfig.PathApp, "hellonerd.db");
+            string fName = Path.Combine(GlobalVars.PathApp, GlobalVars.LocalDbFileName);
             optionsBuilder.UseSqlite($"Filename={fName}");
         }
 

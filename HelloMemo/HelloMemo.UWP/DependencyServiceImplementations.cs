@@ -50,13 +50,11 @@ namespace HelloMemo.UWP
     public class LocalFilesUWP : ILocalFiles
     {
         //---------------------------------------------------------------------------------------
-        public async Task<Stream> GetDBFileReadingStreamAsync()
+        // fileName - имя файла без пути. Путь к файлу - текущая папка приложения.
+        public async Task<Stream> GetLocalFileReadingStreamAsync(string fileName)
         {
-            // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
-
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile dbFile = await localFolder.TryGetItemAsync("hellonerd.db") as StorageFile;
+            StorageFile dbFile = await localFolder.TryGetItemAsync(fileName) as StorageFile;
 
             if (dbFile != null)
             {
@@ -67,13 +65,21 @@ namespace HelloMemo.UWP
             return null;
         }
         //---------------------------------------------------------------------------------------
-        public async Task<Stream> GetDBFileWritingStreamAsync()
+        // fileName - имя файла без пути. Путь к файлу - текущая папка приложения.
+        public async Task<Stream> GetLocalFileWritingStreamAsync(string fileName)
         {
-            // string appPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            //string dbPath = System.IO.Path.Combine(appPath, "hellonerd.db");
-
+            StorageFile dbFile;
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile dbFile = await localFolder.CreateFileAsync("hellonerd.db", CreationCollisionOption.ReplaceExisting); // Создадим файл. Если уже существует, то заменим.
+
+            // Важно не создавать файл заново, если данный файл уже существует т.к. при перезаписи может случиться ошибка, а старый файл уже затерт.
+            try
+            {
+                dbFile = await localFolder.GetFileAsync(fileName);
+            }
+            catch (FileNotFoundException e)
+            {
+                dbFile = await localFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting); // Создадим файл. Если уже существует, то заменим.
+            }
 
             if (dbFile != null)
             {

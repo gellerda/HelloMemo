@@ -69,6 +69,30 @@ namespace HelloMemo.Converters
         }
     }
     //--------------------------------------------------------------------------------------------------
+    // Добавляет к строке слева и справа suffix и preffix.
+    // parameter - строка вида "suffix|preffix" (ОБЯЗАТЕЛЬНО! Даже если нужен только preffix).
+    // Если parameter == null, пустая строка, или более одного разделителя "|", то вернет просто value;
+    public class AddSuffixPreffixConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string strVal = value as string;
+            if (strVal == null) strVal = "";
+            string strParam = parameter as string;
+
+            if (!string.IsNullOrEmpty(strParam))
+            {
+                string[] arrParam = strParam.Split(new char[] { '|' });
+                if (arrParam.Length == 2) return arrParam[0] + strVal + arrParam[1];
+            }
+            return strVal;
+        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+    //--------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------
 }

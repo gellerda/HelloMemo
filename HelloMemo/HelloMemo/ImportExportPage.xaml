@@ -8,24 +8,28 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:IsNotNullConverter x:Key="isNotNullConverter" />
+            <converters:AddSuffixPreffixConverter x:Key="addSuffixPreffixConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.Content>
         <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             
-            <StackLayout Orientation="Horizontal" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" BackgroundColor="Aqua">
-                <Image Source="google_drive_icon.png" VerticalOptions="Start"/>
-                <StackLayout Orientation="Vertical">
-                    <StackLayout Orientation="Horizontal" BackgroundColor="Yellow" IsVisible="{Binding UserEmailGD, Converter={StaticResource isNotNullConverter}}">
-                        <Label Text="{Binding UserNameGD}"/>
-                        <Label Text="{Binding UserEmailGD}"/>
-                        <Button Text="Log out" Command="{Binding LogOutGD}" VerticalOptions="Start" HorizontalOptions="Start"/>
-                    </StackLayout>
-                    <StackLayout Orientation="Horizontal" BackgroundColor="Green">
-                        <Button Text="Save Vocab" Command="{Binding SaveVocab}" VerticalOptions="Start" HorizontalOptions="Start"/>
-                        <Button Text="Load Vocab" Command="{Binding LoadVocab}" VerticalOptions="Start" HorizontalOptions="Start"/>
-                    </StackLayout>
+            <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+                <Label Text="{Binding VocabName, Converter={StaticResource addSuffixPreffixConverter}, ConverterParameter='Vocab file: |.db'}" Margin="10, 20, 0, 20"/>
+                <Editor Text="{Binding VocabName}" Margin="10, 20, 0, 20"/>
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="google_drive_icon.png" VerticalOptions="Start"/>
+                    <Button Text="Save" Command="{Binding SaveVocab}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                    <Button Text="Load" Command="{Binding LoadVocab}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                    <Button IsVisible="{Binding UserNameGD, Converter={StaticResource isNotNullConverter}}" Text="{Binding UserNameGD, Converter={StaticResource addSuffixPreffixConverter}, ConverterParameter='Log out |'}" Command="{Binding LogOutGD}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="yandex_disk_icon.png" VerticalOptions="Start"/>
+                    <Button Text="Save" Command="{Binding SaveVocabYD}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                    <Button Text="Load" Command="{Binding LoadVocabYD}" VerticalOptions="Start" HorizontalOptions="Start"/>
+                    <Button IsVisible="{Binding UserEmailYD, Converter={StaticResource isNotNullConverter}}" Text="{Binding UserEmailYD, Converter={StaticResource addSuffixPreffixConverter}, ConverterParameter='Log out |'}" Command="{Binding LogOutYD}" VerticalOptions="Start" HorizontalOptions="Start"/>
                 </StackLayout>
             </StackLayout>
 
